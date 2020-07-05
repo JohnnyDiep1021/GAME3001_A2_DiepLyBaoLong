@@ -63,7 +63,7 @@ public:
 	void Exit();
 private:
 	Button* m_playBtn;
-	//Sprite* m_pGameStart;
+	Sprite* m_pGameStart;
 	//Label* m_pStartLabel;
 	Label* m_pNameLabel;
 };

@@ -33,12 +33,21 @@ void GameState::Enter()
 	srand((unsigned)time(NULL));
 	m_pTileText = IMG_LoadTexture(Engine::Instance().GetRenderer(), "Img/Tiles.png");
 	m_pPlayerText = IMG_LoadTexture(Engine::Instance().GetRenderer(), "Img/Maga.png");
+	SOMA::Load("Aud/adventure.wav", "adventure", SOUND_MUSIC);
+	SOMA::Load("Aud/Click.wav", "Click", SOUND_SFX);
+	SOMA::Load("Aud/PressM.wav", "PressM", SOUND_SFX);
+	SOMA::Load("Aud/PressR.wav", "PressR", SOUND_SFX);
+	SOMA::Load("Aud/PressF.wav", "PressF", SOUND_SFX);
+	SOMA::Load("Aud/PressH.mp3", "PressH", SOUND_SFX);
+
+	SOMA::SetMusicVolume(15);
+	SOMA::PlayMusic("adventure", -1, 3000);
 
 	SDL_Color black = { 0, 0, 0, 0 };
 	m_pInstruct[0] = new Label("tile", 35, 40, "Press R to restart the play scene", black);
 	m_pInstruct[1] = new Label("tile", 35, 55, "Press H to toggle the Debug view", black);
 	m_pInstruct[2] = new Label("tile", 35, 70, "Press F to find the shortest path (in debug view)", black);
-	m_pInstruct[3] = new Label("tile", 35, 85, "Press M to move actor along the shorstest path to reach the goal (in debug view)", black);
+	m_pInstruct[3] = new Label("tile", 35, 85, "Press M to move actor along the shorstest path to reach the goal", black);
 	m_pInstruct[4] = new Label("tile", 35, 100, "Right-click to set the goal tile (in debug view)", black);
 	m_pInstruct[5] = new Label("tile", 35, 115, "Left-click to set the starting tile (in debug view)", black);
 
@@ -107,16 +116,19 @@ void GameState::Enter()
 void GameState::Update()
 {
 	m_pPlayer->Update(); // Just stops MagaMan from moving.
-
 	// Reset the scene
 	if (EVMA::KeyPressed(SDL_SCANCODE_R))
 	{
+		SOMA::PlaySound("PressR", 0, 1);
 		cout << "Reset Game State" << endl;
 		STMA::PushState(new GameState);
 	}
 
-	if (EVMA::KeyPressed(SDL_SCANCODE_H)) // Toggle debug mode.
+	if (EVMA::KeyPressed(SDL_SCANCODE_H))// Toggle debug mode.
+	{
 		m_showCosts = !m_showCosts;
+		SOMA::PlaySound("PressH", 0, 3);
+	}
 
 	if (m_showCosts)
 	{
@@ -135,17 +147,20 @@ void GameState::Update()
 			{
 				m_pPlayer->GetDstP()->x = (float)(xIdx * 32);
 				m_pPlayer->GetDstP()->y = (float)(yIdx * 32);
+				SOMA::PlaySound("Click", 0, 4);
 			}
 			else if (EVMA::MousePressed(3) /*&& (m_pPlayer->GetDstP()->x == m_pBling->GetDstP()->x) && (m_pPlayer->GetDstP()->y == m_pBling->GetDstP()->y)*/) // Else move the bling with right-click.
 			{
 				m_pBling->GetDstP()->x = (float)(xIdx * 32);
 				m_pBling->GetDstP()->y = (float)(yIdx * 32);
+				SOMA::PlaySound("Click", 0, 5);
 			}
 	
 		}
 	}
 	if (EVMA::KeyPressed(SDL_SCANCODE_F))
 	{
+		SOMA::PlaySound("PressF", 0, 2);
 		for (int row = 0; row < ROWS; row++) // "This is where the fun begins."
 		{ // Update each node with the selected heuristic and set the text for debug mode.
 			for (int col = 0; col < COLS; col++)
@@ -163,6 +178,15 @@ void GameState::Update()
 		PAMA::GetShortestPath(Engine::Instance().GetLevel()[(int)(m_pPlayer->GetDstP()->y / 32)][(int)(m_pPlayer->GetDstP()->x / 32)]->Node(),
 			Engine::Instance().GetLevel()[(int)(m_pBling->GetDstP()->y / 32)][(int)(m_pBling->GetDstP()->x / 32)]->Node());
 	}
+	//if (EVMA::KeyPressed(SDL_SCANCODE_M))
+	//{
+	//	float x = m_pPlayer->GetDstP()->x++;
+	//	float y = m_pPlayer->GetDstP()->y;
+	//	PAMA::GetShortestPath(Engine::Instance().GetLevel()[(int)(y / 32)][(int)(x / 32)]->Node(),
+	//		Engine::Instance().GetLevel()[(int)(m_pBling->GetDstP()->y / 32)][(int)(m_pBling->GetDstP()->x / 32)]->Node());
+	//	
+	//}
+	
 }
 
 void GameState::Render()
@@ -226,15 +250,15 @@ TitleState::TitleState() {}
 
 void TitleState::Enter()
 {
-	SDL_Color white = { 0, 255, 255, 0 };
-	//m_pStartLabel = new Label("tile", 210, 40, "START SCENE", white);
-	m_pNameLabel = new Label("tile", 50, 70, "DIEP, LY BAO LONG (ID: 101277290)", white);
+	SDL_Color black = { 0, 0, 0, 0 };
 	
+	m_pNameLabel = new Label("tile", 80, 90, "DIEP, LY BAO LONG (ID: 101277290)", black);
 	m_playBtn = new PlayButton({ 0,0,400,100 }, { 320,320,400,80 }, Engine::Instance().GetRenderer(), TEMA::GetTexture("playBut"));
-
-	//m_pGameStart = new Sprite({ 0,0, 1024, 768 }, { 0,0,1024, 768 }, Engine::Instance().GetRenderer(), TEMA::GetTexture("StartScene"));
-	//SOMA::Load("Aud/SpaceSprinkles.mp3", "SpaceStart", SOUND_MUSIC);
-	//SOMA::PlayMusic("SpaceStart", -1, 3000);
+	m_pGameStart = new Sprite({ 0,0, 700, 600 }, { 0,0,1024, 768 }, Engine::Instance().GetRenderer(), TEMA::GetTexture("StartScene"));
+	
+	SOMA::Load("Aud/opening.mp3", "Opening", SOUND_MUSIC);
+	SOMA::SetMusicVolume(15);
+	SOMA::PlayMusic("Opening", -1, 3000);
 }
 void TitleState::Update()
 {
@@ -248,6 +272,7 @@ void TitleState::Render()
 	SDL_RenderClear(Engine::Instance().GetRenderer());
 
 	//m_pStartLabel->Render();
+	m_pGameStart->Render();
 	m_pNameLabel->Render();
 	m_playBtn->Render();
 	State::Render();

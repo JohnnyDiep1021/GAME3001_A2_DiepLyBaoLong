@@ -43,6 +43,7 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	
 	FOMA::RegisterFont("img/ltype.ttf", "tile", 13);
 	TEMA::RegisterTexture("Img/play.png", "playBut");
+	TEMA::RegisterTexture("Img/bgStart.png", "StartScene");
 	// Final engine initialization calls.
 	m_fps = (Uint32)round((1 / (double)FPS) * 1000); // Sets FPS in milliseconds and rounds.
 	STMA::ChangeState(new TitleState);

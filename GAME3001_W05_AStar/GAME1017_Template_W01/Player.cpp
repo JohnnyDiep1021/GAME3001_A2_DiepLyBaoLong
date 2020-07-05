@@ -3,8 +3,8 @@
 #include "EventManager.h"
 #define SPEED 2
 
-Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf)
-	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0) {}
+Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf, SDL_FRect* goal)
+	:AnimatedSprite(s, d, r, t, sstart, smin, smax, nf), m_state(idle), m_dir(0), m_pGoal(goal) {}
 
 void Player::Update()
 {
@@ -18,7 +18,7 @@ void Player::Update()
 		}
 		break;
 	case running:
-		if (EVMA::KeyReleased(SDL_SCANCODE_W) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
+		if (EVMA::KeyReleased(SDL_SCANCODE_M) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
 			EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D))
 		{
 			SetState(idle);

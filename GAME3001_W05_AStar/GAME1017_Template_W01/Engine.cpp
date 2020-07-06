@@ -41,7 +41,9 @@ bool Engine::Init(const char* title, int xpos, int ypos, int width, int height, 
 	// Example specific initialization.
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2"); // Call this before any textures are created.
 	
-	FOMA::RegisterFont("img/ltype.ttf", "tile", 13);
+	FOMA::RegisterFont("img/ltype.ttf", "tile", 10);
+	FOMA::RegisterFont("img/ltype.ttf", "standard", 15);
+	FOMA::RegisterFont("img/Consolas.ttf", "UI", 30);
 	TEMA::RegisterTexture("Img/play.png", "playBut");
 	TEMA::RegisterTexture("Img/bgStart.png", "StartScene");
 	// Final engine initialization calls.

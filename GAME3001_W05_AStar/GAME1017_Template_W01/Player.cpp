@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "CollisionManager.h"
 #include "EventManager.h"
+#include "SoundManager.h"
 #define SPEED 2
 
 Player::Player(SDL_Rect s, SDL_FRect d, SDL_Renderer* r, SDL_Texture* t, int sstart, int smin, int smax, int nf, SDL_FRect* goal)
@@ -16,68 +17,75 @@ void Player::Update()
 	switch (m_state)
 	{
 	case idle:
-		//if (EVMA::KeyHeld(SDL_SCANCODE_W) || EVMA::KeyHeld(SDL_SCANCODE_S) ||
-		//	EVMA::KeyHeld(SDL_SCANCODE_A) || EVMA::KeyHeld(SDL_SCANCODE_D))
+		if (EVMA::KeyHeld(SDL_SCANCODE_W) || EVMA::KeyHeld(SDL_SCANCODE_S) ||
+			EVMA::KeyHeld(SDL_SCANCODE_A) || EVMA::KeyHeld(SDL_SCANCODE_D) || EVMA::KeyReleased(SDL_SCANCODE_M))
+		{
+			SetState(running);
+		}
+		//if (EVMA::KeyReleased(SDL_SCANCODE_M))
 		//{
-		//	SetState(running);
+		//	SetState(marching);
 		//}
-		//break;
+		break;
 	case running:
-		//if (EVMA::KeyReleased(SDL_SCANCODE_M) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
-		//	EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D))
-		//{
-		//	SetState(idle);
-		//	break; // Skip movement parsing below.
-		//}
-		//if (EVMA::KeyHeld(SDL_SCANCODE_W))
-		//{
-		//	if (m_dst.y > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
-		//	{
-		//		m_dst.y += -SPEED;
-		//	}
-		//}
-		//else if (EVMA::KeyHeld(SDL_SCANCODE_S))
-		//{
-		//	if (m_dst.y < 768 - 32 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, SPEED))
-		//	{
-		//		m_dst.y += SPEED;
-		//	}
-		//}
-		//if (EVMA::KeyHeld(SDL_SCANCODE_A))
-		//{
-		//	if (m_dst.x > 0  && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
-		//	{
-		//		m_dst.x += -SPEED;
-		//		m_dir = 1;
-		//	}
-		//}
-		//else if (EVMA::KeyHeld(SDL_SCANCODE_D))
-		//{
-		//	if (m_dst.x < 1024 - 32 &&  !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, SPEED, 0))
-		//	{
-		//		m_dst.x += SPEED;
-		//		m_dir = 0;
-		//	}
-		//}
-	case marching:
+		if (EVMA::KeyReleased(SDL_SCANCODE_W) || EVMA::KeyReleased(SDL_SCANCODE_S) ||
+			EVMA::KeyReleased(SDL_SCANCODE_A) || EVMA::KeyReleased(SDL_SCANCODE_D) || EVMA::KeyReleased(SDL_SCANCODE_M))
+		{
+			SetState(idle);
+			break; // Skip movement parsing below.
+		}
+		if (EVMA::KeyHeld(SDL_SCANCODE_W))
+		{
+			if (m_dst.y > 0 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, -SPEED))
+			{
+				m_dst.y += -SPEED;
+			}
+		}
+		else if (EVMA::KeyHeld(SDL_SCANCODE_S))
+		{
+			if (m_dst.y < 768 - 32 && !COMA::PlayerCollision({ (int)m_dst.x, (int)(m_dst.y), (int)32, (int)32 }, 0, SPEED))
+			{
+				m_dst.y += SPEED;
+			}
+		}
+		if (EVMA::KeyHeld(SDL_SCANCODE_A))
+		{
+			if (m_dst.x > 0  && !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, -SPEED, 0))
+			{
+				m_dst.x += -SPEED;
+				m_dir = 1;
+			}
+		}
+		else if (EVMA::KeyHeld(SDL_SCANCODE_D))
+		{
+			if (m_dst.x < 1024 - 32 &&  !COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, SPEED, 0))
+			{
+				m_dst.x += SPEED;
+				m_dir = 0;
+			}
+		}
 		if (EVMA::KeyPressed(SDL_SCANCODE_M))
 		{
+			SOMA::StopMusic(3000);
+			SOMA::SetSoundVolume(15, 4);
+			SOMA::PlaySound("PressM", 0, 4);
 			std::cout << "Press M:" << std::endl;
 			//SOMA::PlaySound("arrive", 0, 2);
-			if (MAMA::Distance((GetDstP()->x + GetDstP()->w / 2.0f), (m_pGoal->x + m_pGoal->w / 2.0f),
-				(GetDstP()->y + GetDstP()->h / 2.0f), (m_pGoal->y + m_pGoal->h / 2.0f)) <= 2.0)
+			if (!COMA::PlayerCollision({ (int)m_dst.x, (int)m_dst.y, (int)32, (int)32 }, SPEED, 0))
 			{
-				Stop();
-				break;
+				if (MAMA::Distance((GetDstP()->x + GetDstP()->w / 2.0f), (m_pGoal->x + m_pGoal->w / 2.0f),
+					(GetDstP()->y + GetDstP()->h / 2.0f), (m_pGoal->y + m_pGoal->h / 2.0f)) <= 2.0)
+				{
+					Stop();
+					break;
+				}
+				else
+				{
+					double destAngle = MAMA::AngleBetweenPoints((m_pGoal->y + m_pGoal->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f),
+						(m_pGoal->x + m_pGoal->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f));
+					Move2Stop(destAngle);
+				}
 			}
-			else
-			{
-				double destAngle = MAMA::AngleBetweenPoints((m_pGoal->y + m_pGoal->h / 2.0f) - (GetDstP()->y + GetDstP()->h / 2.0f),
-					(m_pGoal->x + m_pGoal->w / 2.0f) - (GetDstP()->x + GetDstP()->w / 2.0f));
-				Move2Stop(destAngle);
-			}
-			GetDstP()->x += (float)m_dx;
-			GetDstP()->y += (float)m_dy;
 		}
 		break;
 	}

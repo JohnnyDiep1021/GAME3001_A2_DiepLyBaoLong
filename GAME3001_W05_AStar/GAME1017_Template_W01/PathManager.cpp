@@ -5,7 +5,6 @@
 
 void PathManager::GetShortestPath(PathNode* start, PathNode* goal)
 {
-	// std::cout << "Starting pathing..." << std::endl;
 	s_path.clear(); // Clear the old saved path so we can save a new one.
 	s_path.shrink_to_fit();
 	NodeRecord* currentRecord = new NodeRecord(start);
@@ -14,8 +13,7 @@ void PathManager::GetShortestPath(PathNode* start, PathNode* goal)
 	while (s_open.size() > 0)
 	{
 		currentRecord = GetSmallestNode();
-		// std::cout << "Doing node at: " << currentRecord->m_node->x << ',' << currentRecord->m_node->y << std::endl;
-		// std::cout << "Found " << currentRecord->m_node->GetConnections().size() << " connections!" << std::endl;
+
 		if (currentRecord->m_node == goal)
 		{
 			s_open.erase(std::remove(s_open.begin(), s_open.end(), currentRecord), s_open.end());
@@ -60,14 +58,14 @@ void PathManager::GetShortestPath(PathNode* start, PathNode* goal)
 		s_closed.push_back(currentRecord);
 		// std::cout << "Open size: " << s_open.size() << std::endl;
 	}
-	// std::cout << "Done while loop, open size:" << s_open.size() << std::endl;
+
 	if (currentRecord->m_node != goal)
 	{
 		std::cout << "Could not find path!" << std::endl;
 	}
 	else
 	{
-		// std::cout << "Found goal at: [" << currentRecord->m_node->y / 32 << ',' << currentRecord->m_node->x / 32 << ']' << std::endl;
+		
 		while (currentRecord->m_node != start)
 		{
 			//std::cout << "Doing record for: [" << currentRecord->m_node->y/32 << ',' << currentRecord->m_node->x/32 << ']' << std::endl;
@@ -76,8 +74,7 @@ void PathManager::GetShortestPath(PathNode* start, PathNode* goal)
 		}
 		std::reverse(s_path.begin(), s_path.end());
 	}
-	// Clean up lists. Uncomment the cout below to see how many records we have to clean up.
-	// std::cout << "Cleaning up..." << "open size: " << s_open.size() << " | closed size: " << s_closed.size() << std::endl;
+
 	for (unsigned i = 0; i < s_open.size(); i++)
 	{
 		delete s_open[i];

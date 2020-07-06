@@ -12,7 +12,7 @@ public:
 	void Render();
 	void Start();
 private:
-	enum state { idle, running, marching } m_state;
+	enum state { idle, running } m_state;
 	bool m_dir;
 	SDL_FRect* m_pGoal;
 	void Move2Stop(const double angle);

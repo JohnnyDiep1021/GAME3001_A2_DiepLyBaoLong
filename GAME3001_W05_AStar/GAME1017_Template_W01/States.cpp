@@ -42,14 +42,16 @@ void GameState::Enter()
 
 	SOMA::SetMusicVolume(15);
 	SOMA::PlayMusic("adventure", -1, 3000);
-
+	
 	SDL_Color black = { 0, 0, 0, 0 };
-	m_pInstruct[0] = new Label("tile", 35, 40, "Press R to restart the play scene", black);
-	m_pInstruct[1] = new Label("tile", 35, 55, "Press H to toggle the Debug view", black);
-	m_pInstruct[2] = new Label("tile", 35, 70, "Press F to find the shortest path (in debug view)", black);
-	m_pInstruct[3] = new Label("tile", 35, 85, "Press M to move actor along the shorstest path to reach the goal", black);
-	m_pInstruct[4] = new Label("tile", 35, 100, "Right-click to set the goal tile (in debug view)", black);
-	m_pInstruct[5] = new Label("tile", 35, 115, "Left-click to set the starting tile (in debug view)", black);
+
+	m_pInstruct[0] = new Label("standard", 35, 40, "Press R to restart the play scene", black);
+	m_pInstruct[1] = new Label("standard", 35, 55, "Press H to toggle the Debug view", black);
+	m_pInstruct[2] = new Label("standard", 35, 70, "Press F to find the shortest path (in debug view)", black);
+	m_pInstruct[3] = new Label("standard", 35, 85, "Press M to move actor", black);
+	m_pInstruct[4] = new Label("standard", 35, 100, "Right-click to set the goal tile (in debug view)", black);
+	m_pInstruct[5] = new Label("standard", 35, 115, "Left-click to set the starting tile (in debug view)", black);
+
 
 	m_pBling = new Sprite({ 224,64,32,32 }, { (float)(16) * 32, (float)(4) * 32, 32, 32 }, Engine::Instance().GetRenderer(), m_pTileText);
 	m_pPlayer = new Player({ 0,0,32,32 }, { (float)(16) * 32, (float)(12) * 32, 32, 32 }, Engine::Instance().GetRenderer(), m_pPlayerText, 0, 0, 0, 4, m_pBling->GetDstP());
@@ -115,7 +117,7 @@ void GameState::Enter()
 
 void GameState::Update()
 {
-	m_pPlayer->Update(); // Just stops MagaMan from moving.
+	
 	// Reset the scene
 	if (EVMA::KeyPressed(SDL_SCANCODE_R))
 	{
@@ -178,14 +180,8 @@ void GameState::Update()
 		PAMA::GetShortestPath(Engine::Instance().GetLevel()[(int)(m_pPlayer->GetDstP()->y / 32)][(int)(m_pPlayer->GetDstP()->x / 32)]->Node(),
 			Engine::Instance().GetLevel()[(int)(m_pBling->GetDstP()->y / 32)][(int)(m_pBling->GetDstP()->x / 32)]->Node());
 	}
-	//if (EVMA::KeyPressed(SDL_SCANCODE_M))
-	//{
-	//	float x = m_pPlayer->GetDstP()->x++;
-	//	float y = m_pPlayer->GetDstP()->y;
-	//	PAMA::GetShortestPath(Engine::Instance().GetLevel()[(int)(y / 32)][(int)(x / 32)]->Node(),
-	//		Engine::Instance().GetLevel()[(int)(m_pBling->GetDstP()->y / 32)][(int)(m_pBling->GetDstP()->x / 32)]->Node());
-	//	
-	//}
+	m_pPlayer->Update(); // Just stops MagaMan from moving.
+		
 	
 }
 
@@ -252,7 +248,7 @@ void TitleState::Enter()
 {
 	SDL_Color black = { 0, 0, 0, 0 };
 	
-	m_pNameLabel = new Label("tile", 80, 90, "DIEP, LY BAO LONG (ID: 101277290)", black);
+	m_pNameLabel = new Label("UI", 240, 90, "DIEP, LY BAO LONG (ID: 101277290)", black);
 	m_playBtn = new PlayButton({ 0,0,400,100 }, { 320,320,400,80 }, Engine::Instance().GetRenderer(), TEMA::GetTexture("playBut"));
 	m_pGameStart = new Sprite({ 0,0, 700, 600 }, { 0,0,1024, 768 }, Engine::Instance().GetRenderer(), TEMA::GetTexture("StartScene"));
 	
